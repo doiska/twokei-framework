@@ -1,13 +1,10 @@
-# node-typescript-boilerplate
+# Twokei @ Framework
 
-A Node.js project boilerplate with Typescript support and auto-reload.
-Feel free to customize as you need it.
+A Discord.js V14@dev framework.
 
-Use `npm run dev` to start a nodemon watcher over `src` files.
+Use `npm install twokei-framework`.
 
-Use `npm start` to run your project without nodemon.
-
-This boilerplate uses: 
-* [typescript cli](https://www.npmjs.com/package/typescript) For TS files transpilation.
-* [nodemon](https://nodemon.io/) For auto-reload project on changes.
-* [ts-node](https://github.com/TypeStrong/ts-node) For execution of TS files.
+- [discord.js](https://discord.js.org/)
+- [typescript cli](https://www.npmjs.com/package/typescript) For TS files transpilation.
+- [nodemon](https://nodemon.io/) For auto-reload project on changes.
+- [ts-node](https://github.com/TypeStrong/ts-node) For execution of TS files.
