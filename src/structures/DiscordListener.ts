@@ -17,6 +17,8 @@ export interface IDiscordListenerOptions {
     once: boolean;
 }
 
+type RunParams<E extends keyof ClientEvents> = TwokeiClient & E extends keyof ClientEvents ? ClientEvents[E] : unknown[]
+
 export abstract class DiscordListener<E extends keyof ClientEvents> implements IDiscordListener {
 
     public readonly event: string;
@@ -30,7 +32,12 @@ export abstract class DiscordListener<E extends keyof ClientEvents> implements I
         this.enabled = true;
     }
 
-    public abstract onLoad(client: TwokeiClient): any;
-    public abstract onUnload(client: TwokeiClient): any;
-    public abstract run(...args: E extends keyof ClientEvents ? ClientEvents[E] : unknown[]): unknown;
+    public onLoad(client: TwokeiClient) {
+        console.log(`Event ${this.event} loaded.`)
+    }
+    public onUnload(client: TwokeiClient) {
+        console.log(`Event ${this.event} unloaded.`)
+    }
+
+    public abstract run(...args: RunParams<E>): unknown;
 }
