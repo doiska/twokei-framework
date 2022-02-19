@@ -15,7 +15,7 @@ export default class CommandHandler extends Collection<String, ICommand> {
     }
 
     private async setup(client: TwokeiClient, dir: string) {
-        for (const [file, fileName] of loader(join(__dirname, 'commands')))
+        for (const [file, fileName] of loader(join(dir, 'commands')))
             await this.registerCommand(client, file, fileName);
     }
 

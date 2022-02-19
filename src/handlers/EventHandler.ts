@@ -13,7 +13,7 @@ export default class EventHandler {
     }
 
     private async setup(client: TwokeiClient, dir: string) {
-        for (const [file, fileName] of loader(join(__dirname, 'listeners'))) {
+        for (const [file, fileName] of loader(join(dir, 'listeners'))) {
             this.registerEvent(client, file, fileName)
         }
     }
