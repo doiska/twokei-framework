@@ -3,7 +3,7 @@
   "version": "0.0.4-dev",
   "description": "A discord.js framework.",
   "main": "./dist/index.js",
-  "types": "index.d.ts",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "start": "ts-node src/main.ts",
     "dev": "nodemon --config ./nodemon.json",
