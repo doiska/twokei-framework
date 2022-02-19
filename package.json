@@ -13,7 +13,7 @@
   "author": "doiska@twokei.website",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^14.0.0-dev.1645142857.f7257f0",
+    "discord.js": "github:monbrey/discord.js#modals",
     "lexure": "^0.17.0",
     "nodemon": "^2.0.15",
     "remove": "^0.1.5",

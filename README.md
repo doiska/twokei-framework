@@ -1,6 +1,6 @@
 # Twokei @ Framework
 
-A Discord.js V14 under development framework.
+A Discord.js V13 under development framework.
 
 `npm install twokei-framework`.
 
