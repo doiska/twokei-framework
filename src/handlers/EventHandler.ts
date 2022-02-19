@@ -26,8 +26,13 @@ export default class EventHandler {
         if (event.default && Object.keys(event).length === 1)
             event = event.default;
 
-        const { event: eventName, run } = event as IDiscordListener;
+        const { event: eventName, run, onLoad } = event as IDiscordListener;
 
-        this.client.on(eventName, (...params) => run(client, params));
+        this.client.on(eventName, (...params) => run([
+            client,
+            ...params
+        ]));
+
+        onLoad(client);
     }
 }

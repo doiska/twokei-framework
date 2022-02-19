@@ -1,8 +1,9 @@
 {
   "name": "twokei-framework",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A discord.js framework.",
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "index.d.ts",
   "scripts": {
     "start": "ts-node src/main.ts",
     "dev": "nodemon --config ./nodemon.json",

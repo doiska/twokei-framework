@@ -4,16 +4,16 @@ import TwokeiClient from "../client/TwokeiClient";
 export interface ICommand {
 
     name: string;
-    category: string;
-    description: string;
-    aliases: string[];
+    category?: string;
+    description?: string;
+    aliases?: string[];
 
-    slash: boolean;
-    ownerOnly: boolean;
-    hidden: boolean;
-    testOnly: boolean;
+    slash?: boolean;
+    ownerOnly?: boolean;
+    hidden?: boolean;
+    testOnly?: boolean;
 
-    cooldown: number;
+    cooldown?: number;
 
     callback(response: ICommandResponse): any
 }
