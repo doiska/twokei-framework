@@ -13,26 +13,29 @@ export default class EventHandler {
     }
 
     private async setup(client: TwokeiClient, dir: string) {
-        for (const [file, fileName] of loader(join(dir, 'listeners'))) {
-            this.registerEvent(client, file, fileName)
+        for (const [filePath, fileName] of loader(join(dir, 'listeners'))) {
+            this.registerEvent(client, filePath, fileName)
         }
     }
 
 
-    private async registerEvent(client: TwokeiClient, file: string, fileName: string) {
+    private async registerEvent(client: TwokeiClient, filePath: string, fileName: string) {
 
-        let event = await import(file);
+        let Event = await import(filePath);
 
-        if (event.default && Object.keys(event).length === 1)
-            event = event.default;
+        if (Event.default && Object.keys(Event).length === 1)
+            Event = Event.default;
 
-        const { event: eventName, run, onLoad } = event as IDiscordListener;
+        const { event: eventName, run, onLoad } = new Event() as IDiscordListener;
+
+        console.log('Loading event: ', Event, eventName, run);
 
         this.client.on(eventName, (...params) => run([
             client,
             ...params
         ]));
 
-        onLoad(client);
+        if (onLoad)
+            onLoad(client);
     }
 }

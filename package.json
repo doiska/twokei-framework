@@ -1,6 +1,6 @@
 {
   "name": "twokei-framework",
-  "version": "0.0.4-dev-1645142860",
+  "version": "0.0.5",
   "description": "A discord.js framework.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -26,6 +26,10 @@ export default class TwokeiClient<Ready extends boolean = boolean> extends Clien
 
         process.on('uncaughtException', (error) => console.error(`Uncaught exception: ${error}`))
         process.on('unhandledRejection', (error) => console.error(`Uncaught exception: ${error}`))
+
+        this.on('ready', (client) => {
+            this.on('messageCreate', (message) => this.commandHandler.performCommand(message));
+        })
     }
 }
 

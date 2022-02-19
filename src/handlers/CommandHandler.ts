@@ -15,33 +15,38 @@ export default class CommandHandler extends Collection<String, ICommand> {
     }
 
     private async setup(client: TwokeiClient, dir: string) {
-        for (const [file, fileName] of loader(join(dir, 'commands')))
-            await this.registerCommand(client, file, fileName);
+        for (const [filePath, fileName] of loader(join(dir, 'commands'))) {
+            await this.registerCommand(client, filePath, fileName);
+        }
     }
 
-    private async registerCommand(client: TwokeiClient, file: string, fileName: string) {
+    private async registerCommand(client: TwokeiClient, filePath: string, fileName: string) {
 
-        let command = await import(file);
+        let Command = await import(filePath);
 
-        if (command.default && Object.keys(command).length === 1)
-            command = command.default;
+        if (Command.default && Object.keys(Command).length === 1)
+            Command = Command.default;
+
+
+        Command = new Command();
 
         const {
             name,
             callback
-        } = command as ICommand;
+        } = Command as ICommand;
 
         if (!callback)
             throw new Error(`No callback found on "${fileName}".`)
 
-        super.set(name ?? fileName, command);
+        console.log('Loading command: ', fileName)
+        super.set(name ?? fileName, Command);
     }
 
     private unRegisterCommand(name: string): boolean {
         return super.delete(name);
     }
 
-    public performCommand(commandName: string, message: Message) {
+    public performCommand(message: Message) {
 
         const filteredMessage = this.filterMessage('2!', message);
 
@@ -68,7 +73,7 @@ export default class CommandHandler extends Collection<String, ICommand> {
                 }
             }
         } catch (e) {
-            console.log(`Couldn't perform command ${commandName}.`)
+            console.log(`Couldn't perform command ${message.content}.`)
         }
     }
 
@@ -96,7 +101,6 @@ export default class CommandHandler extends Collection<String, ICommand> {
             return;
 
         //TODO: slash check
-
         return {
             prefix: prefix,
             name: commandName,
