@@ -1,5 +1,11 @@
 import TwokeiClient from "./client/TwokeiClient";
-import DiscordListener from './structures/DiscordListener';
 import { ICommand, ICommandResponse } from "./structures/DiscordCommand";
+import { IDiscordListener, DiscordListener } from "./structures/DiscordListener";
 
-export { TwokeiClient, DiscordListener, ICommand, ICommandResponse }
+export {
+    TwokeiClient,
+    DiscordListener,
+    IDiscordListener,
+    ICommand,
+    ICommandResponse
+}

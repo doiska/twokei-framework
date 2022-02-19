@@ -1,8 +1,8 @@
 # Twokei @ Framework
 
-A Discord.js V14@dev framework.
+A Discord.js V14 under development framework.
 
-Use `npm install twokei-framework`.
+`npm install twokei-framework`.
 
 - [discord.js](https://discord.js.org/)
 - [typescript cli](https://www.npmjs.com/package/typescript) For TS files transpilation.

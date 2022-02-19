@@ -1,16 +1,36 @@
-import { Client, ClientEvents, Events } from "discord.js";
-import TwokeiClient from "../client/TwokeiClient"
+import { ClientEvents } from "discord.js";
+import TwokeiClient from "../client/TwokeiClient";
 
-export default abstract class DiscordListener<T extends keyof ClientEvents> {
+export interface IDiscordListener {
 
-    client: TwokeiClient;
-    eventType: typeof Events;
+    enabled: boolean;
+    readonly event: string | symbol;
+    readonly once: boolean;
 
-    constructor(client: TwokeiClient, eventType: typeof Events) {
-        this.client = client;
-        this.eventType = eventType;
+    onLoad(client: TwokeiClient): any;
+    onUnload(client: TwokeiClient): any;
+    run(...params: any[]): any;
+}
+
+export interface IDiscordListenerOptions {
+    event: string;
+    once: boolean;
+}
+
+export abstract class DiscordListener<E extends keyof ClientEvents> implements IDiscordListener {
+
+    public readonly event: string;
+    public readonly once: boolean;
+    public enabled;
+
+    public constructor({ event, once }: IDiscordListenerOptions) {
+        this.event = event;
+        this.once = once;
+
+        this.enabled = true;
     }
 
-    abstract onInit(): any;
-    abstract onExecute(...params: ClientEvents[T]): any
+    public abstract onLoad(client: TwokeiClient): any;
+    public abstract onUnload(client: TwokeiClient): any;
+    public abstract run(...args: E extends keyof ClientEvents ? ClientEvents[E] : unknown[]): unknown;
 }

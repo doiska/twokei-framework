@@ -2,7 +2,7 @@
   "name": "twokei-framework",
   "version": "0.0.2",
   "description": "A discord.js framework.",
-  "main": "./dist/main.js",
+  "main": "./src/index.ts",
   "scripts": {
     "start": "ts-node src/main.ts",
     "dev": "nodemon --config ./nodemon.json",
