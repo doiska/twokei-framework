@@ -17,20 +17,11 @@ export default class TwokeiClient<Ready extends boolean = boolean> extends Clien
 
     constructor(options: ClientOptions) {
         super(options);
+        this.prefix = options.prefix;
+        this.baseDirectoryUrl = options.baseDirectoryUrl;
 
-        try {
-            this.prefix = options.prefix;
-            this.baseDirectoryUrl = options.baseDirectoryUrl;
-
-            this.commandHandler = new CommandHandler(this, options.baseDirectoryUrl);
-            this.eventHandler = new EventHandler(this, options.baseDirectoryUrl);
-
-            process.on('uncaughtException', (error) => console.error(`Uncaught exception: ${error}`))
-            process.on('unhandledRejection', (error) => console.error(`Uncaught exception: ${error}`))
-
-        } catch (e) {
-            console.log(e);
-        }
+        this.commandHandler = new CommandHandler(this, options.baseDirectoryUrl);
+        this.eventHandler = new EventHandler(this, options.baseDirectoryUrl);
 
         this.on('ready', (client) => {
             this.on('messageCreate', (message) => {

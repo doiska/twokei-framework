@@ -24,14 +24,20 @@ export default class EventHandler {
         try {
             let Event = (await import(filePath).then((e) => e.default ?? e));
 
+            if (!Event) {
+                console.log('No event found for file: ' + filePath);
+                return;
+            }
+
             const { event: eventName, run, onLoad } = new Event({ client: client });
 
-            console.log('Loading event: ', Event, eventName, run);
 
-            if (!eventName) {
+            if (!Event || !eventName) {
                 console.error('No EventName found on ', filePath);
                 return;
             }
+
+            console.log('Loading event: ', Event, eventName, run);
 
             this.client.on(eventName, (...params) => run(...params));
         } catch (e) {
