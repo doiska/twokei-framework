@@ -1,8 +1,9 @@
 import TwokeiClient from "../client/TwokeiClient";
 import { join } from 'path';
 import loader from "../utils/loader";
-import { IDiscordListener } from "../structures/DiscordListener";
+import { ClientEvents } from "discord.js";
 
+type RunParams = keyof ClientEvents;
 export default class EventHandler {
 
     private client: TwokeiClient;
@@ -18,24 +19,23 @@ export default class EventHandler {
         }
     }
 
-
     private async registerEvent(client: TwokeiClient, filePath: string, fileName: string) {
 
-        let Event = await import(filePath);
+        try {
+            let Event = (await import(filePath).then((e) => e.default ?? e));
 
-        if (Event.default && Object.keys(Event).length === 1)
-            Event = Event.default;
+            const { event: eventName, run, onLoad } = new Event({ client: client });
 
-        const { event: eventName, run, onLoad } = new Event() as IDiscordListener;
+            console.log('Loading event: ', Event, eventName, run);
 
-        console.log('Loading event: ', Event, eventName, run);
+            if (!eventName) {
+                console.error('No EventName found on ', filePath);
+                return;
+            }
 
-        this.client.on(eventName, (...params) => run([
-            client,
-            ...params
-        ]));
-
-        if (onLoad)
-            onLoad(client);
+            this.client.on(eventName, (...params) => run(...params));
+        } catch (e) {
+            console.log(e);
+        }
     }
 }

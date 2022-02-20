@@ -1,5 +1,5 @@
 import { Collection, Guild, Message } from "discord.js";
-import { ICommand } from "../structures/DiscordCommand";
+import { ICommand, ICommandResponse } from "../structures/DiscordCommand";
 import { join } from 'path';
 import loader from '../utils/loader';
 import TwokeiClient from "../client/TwokeiClient";
@@ -48,7 +48,7 @@ export default class CommandHandler extends Collection<String, ICommand> {
 
     public performCommand(message: Message) {
 
-        const filteredMessage = this.filterMessage('2!', message);
+        const filteredMessage = this.filterMessage(this.client.prefix, message);
 
         if (!filteredMessage)
             return;
@@ -56,7 +56,7 @@ export default class CommandHandler extends Collection<String, ICommand> {
         const { command } = filteredMessage;
 
         try {
-            const response = command.callback({ client: this.client, message, args: [] });
+            const response = command.callback({ client: this.client, message, args: [] } as ICommandResponse);
 
             if (!response)
                 return;

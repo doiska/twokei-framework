@@ -1,34 +1,24 @@
-import { ClientEvents } from "discord.js";
+import { Awaitable, ClientEvents } from "discord.js";
 import TwokeiClient from "../client/TwokeiClient";
 
-export interface IDiscordListener {
-
-    enabled: boolean;
-    readonly event: string | symbol;
-    readonly once: boolean;
-
-    onLoad(client: TwokeiClient): any;
-    onUnload(client: TwokeiClient): any;
-    run(...params: any[]): any;
-}
-
+type RunParams<E extends keyof ClientEvents> = ClientEvents[E];
 export interface IDiscordListenerOptions {
     event: string;
     once: boolean;
 }
-
-type RunParams<E extends keyof ClientEvents> = TwokeiClient & E extends keyof ClientEvents ? ClientEvents[E] : unknown[]
-
-export abstract class DiscordListener<E extends keyof ClientEvents> implements IDiscordListener {
+export default abstract class DiscordListener<E extends keyof ClientEvents> {
 
     public readonly event: string;
-    public readonly once: boolean;
-    public enabled;
+    public readonly once: boolean = false;
+    public enabled: boolean;
 
-    public constructor({ event, once }: IDiscordListenerOptions) {
+    constructor({ event, once }: IDiscordListenerOptions) {
+
+        if (!event)
+            throw new Error(`Event error found, trying to proccess: eventName - ${event}`)
+
         this.event = event;
         this.once = once;
-
         this.enabled = true;
     }
 
@@ -39,5 +29,5 @@ export abstract class DiscordListener<E extends keyof ClientEvents> implements I
         console.log(`Event ${this.event} unloaded.`)
     }
 
-    public abstract run(...args: RunParams<E>): unknown;
+    public abstract run(...args: RunParams<E>): void;
 }

@@ -9,26 +9,33 @@ export interface ExtendedClientOptions {
 
 export default class TwokeiClient<Ready extends boolean = boolean> extends Client<Ready> {
 
-    public baseDirectoryUrl: string;
-    public prefix: string;
+    public baseDirectoryUrl!: string;
+    public prefix!: string;
 
-    public commandHandler: CommandHandler;
-    public eventHandler: EventHandler;
+    public commandHandler!: CommandHandler;
+    public eventHandler!: EventHandler;
 
     constructor(options: ClientOptions) {
         super(options);
 
-        this.prefix = options.prefix;
-        this.baseDirectoryUrl = options.baseDirectoryUrl;
+        try {
+            this.prefix = options.prefix;
+            this.baseDirectoryUrl = options.baseDirectoryUrl;
 
-        this.commandHandler = new CommandHandler(this, options.baseDirectoryUrl);
-        this.eventHandler = new EventHandler(this, options.baseDirectoryUrl);
+            this.commandHandler = new CommandHandler(this, options.baseDirectoryUrl);
+            this.eventHandler = new EventHandler(this, options.baseDirectoryUrl);
 
-        process.on('uncaughtException', (error) => console.error(`Uncaught exception: ${error}`))
-        process.on('unhandledRejection', (error) => console.error(`Uncaught exception: ${error}`))
+            process.on('uncaughtException', (error) => console.error(`Uncaught exception: ${error}`))
+            process.on('unhandledRejection', (error) => console.error(`Uncaught exception: ${error}`))
+
+        } catch (e) {
+            console.log(e);
+        }
 
         this.on('ready', (client) => {
-            this.on('messageCreate', (message) => this.commandHandler.performCommand(message));
+            this.on('messageCreate', (message) => {
+                this.commandHandler.performCommand(message)
+            });
         })
     }
 }
