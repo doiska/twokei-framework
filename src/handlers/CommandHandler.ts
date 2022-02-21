@@ -80,7 +80,7 @@ export default class CommandHandler extends Collection<String, ICommand> {
     private filterMessage(prefix: string, message: Message) {
         let content: string = message.content;
 
-        if (!content.toLowerCase().startsWith(prefix))
+        if (!content.toLowerCase().startsWith(prefix.toLowerCase()))
             return;
 
         if (message.author.bot)

@@ -17,6 +17,7 @@ export default class TwokeiClient<Ready extends boolean = boolean> extends Clien
 
     constructor(options: ClientOptions) {
         super(options);
+
         this.prefix = options.prefix;
         this.baseDirectoryUrl = options.baseDirectoryUrl;
 
