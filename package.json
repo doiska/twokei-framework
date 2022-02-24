@@ -1,23 +1,23 @@
 {
-  "name": "twokei-xframework",
-  "version": "0.0.45-v13",
-  "description": "A discord.js framework.",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "scripts": {
-    "start": "ts-node src/main.ts",
-    "dev": "nodemon --config ./nodemon.json",
-    "build": "tsc"
-  },
-  "keywords": [],
-  "author": "doiska@twokei.website",
-  "license": "ISC",
-  "dependencies": {
-    "discord.js": "github:monbrey/discord.js#modals",
-    "lexure": "^0.17.0",
-    "nodemon": "^2.0.15",
-    "remove": "^0.1.5",
-    "ts-node": "^7.0.1",
-    "typescript": "^4.5.5"
-  }
+    "name": "twokei-xframework",
+    "version": "0.0.5-v13",
+    "description": "A discord.js framework.",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "start": "ts-node src/main.ts",
+        "dev": "nodemon --config ./nodemon.json",
+        "build": "tsc"
+    },
+    "keywords": [],
+    "author": "doiska@twokei.website",
+    "license": "ISC",
+    "dependencies": {
+        "discord.js": "github:monbrey/discord.js#modals",
+        "lexure": "^0.17.0",
+        "nodemon": "^2.0.15",
+        "remove": "^0.1.5",
+        "ts-node": "^7.0.1",
+        "typescript": "^4.5.5"
+    }
 }
