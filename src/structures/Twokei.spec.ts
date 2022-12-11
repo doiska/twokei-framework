@@ -20,6 +20,6 @@ describe('Twokei Client', function () {
 			expect(client).toBeInstanceOf(TwokeiClient);
 		});
 
-		await client.login('MTA0NTM4MjIwMTE0NTA1MzMzNA.GasZIO.F26A1JrbyKBUQH6ZB7C7Uw7qQHHJKcl5GrIRhc');
+		await client.login(process.env.TOKEN);
 	});
 });
