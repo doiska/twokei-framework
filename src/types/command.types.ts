@@ -5,7 +5,7 @@ import {
 	SlashCommandBuilder,
 	TextBasedChannel, User
 } from "discord.js";
-import {TwokeiClient} from "../structures/TwokeiClient";
+import { TwokeiClient } from "../structures/TwokeiClient";
 
 export type CommandResponse = void | string | EmbedData | EmbedBuilder;
 

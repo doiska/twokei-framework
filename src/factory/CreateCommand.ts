@@ -1,7 +1,9 @@
-import { Command, CommandExecution } from "../types/command.types";
-import { Optional } from "../types/utils.type";
+import type { Command, CommandExecution } from "../types/command.types";
+import type { Optional } from "../types/utils.type";
 
-export const createCommand = (command: Optional<Command, 'execute'>, execute?: CommandExecution) => {
+type CommandWithoutExecute = Optional<Command, 'execute'>;
+
+export const createCommand = (command: CommandWithoutExecute, execute?: CommandExecution) => {
 	if (!command.name) {
 		throw Error('Trying to register a command without an name.');
 	}

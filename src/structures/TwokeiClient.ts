@@ -1,22 +1,30 @@
-import { Client, ClientOptions } from "discord.js";
+import { Client, ClientOptions, REST, Routes, SlashCommandBuilder } from "discord.js";
 import { CommandHandler } from "../handlers/CommandHandler";
 import { EventHandler } from "../handlers/EventHandler";
 
 import glob from 'fast-glob';
+import { Command } from "../types/command.types";
 
 declare module 'discord.js' {
 	interface ClientOptions {
+
+		/**
+		 * CWD
+		 * @default process.cwd()
+		 */
+		currentWorkingDirectory?: string;
+
 		/**
 		 * Commands path, supports glob
 		 * @default []
 		 */
-		commandsPaths?: string[];
+		commandsPath?: string;
 
 		/**
 		 * Events path, supports glob
 		 * @default []
 		 */
-		eventsPaths?: string[];
+		eventsPath?: string;
 
 		/**
 		 * Disable autoload events and commands
@@ -38,8 +46,8 @@ class TwokeiClient extends Client {
 	constructor(twokeiOptions: ClientOptions) {
 		super({
 			autoload: true,
-			eventsPaths: [],
-			commandsPaths: [],
+			eventsPath: '../events/**/*.js',
+			commandsPath: '../commands/**/*.js',
 			...twokeiOptions
 		});
 
@@ -47,23 +55,58 @@ class TwokeiClient extends Client {
 		this.commandHandler = new CommandHandler(this);
 
 		if (twokeiOptions.autoload) {
-			this.commandHandler.loadCommands().then(() => console.log(`Loaded ${this.commandHandler.commands.size} commands`));
-			this.eventHandler.loadEvents().then(() => console.log(`Loaded ${this.eventHandler.events.size} events`));
+			this.commandHandler.loadCommands().then(() => this.registerSlashCommands());
+			this.eventHandler.loadEvents();
 		}
 	}
 
-	public async getContextValues<T>(paths: string[]) {
-		const files = await this.getAllFiles(paths);
-		const promises = files.map(file => import(file));
-		const imported = await Promise.all(promises);
+	public async getContextValues<T>(path: string): Promise<T[]> {
+		const files = await this.getAllFiles(path);
 
-		return imported.map(value => Object.values(value)).flat() as T[];
+		const values = files.map(file => {
+			const command = require(`${this.options.currentWorkingDirectory ?? process.cwd()}/${file}`);
+			return Object.values(command);
+		});
+
+		console.log(values.flat());
+
+		return values.flat() as T[];
 	}
 
-	private async getAllFiles(paths: string[]) {
-		const promises = paths.map(path => glob(path, { onlyFiles: true, cwd: process.cwd() }));
-		const files = await Promise.all(promises);
-		return files.flat();
+	public async getAllFiles(path: string) {
+		const cwd = this.options.currentWorkingDirectory ?? process.cwd();
+		return await glob(path, { cwd, onlyFiles: true });
+	}
+
+	private async registerSlashCommands() {
+		if (!process.env.CLIENT_ID || !process.env.TOKEN || !process.env.GUILD_ID) {
+			throw new Error('Missing CLIENT_ID, TOKEN or GUILD_ID in .env file.');
+		}
+
+		const parsed = Array.from(this.commandHandler.commands.values()).map(command => this.parseCommandToSlashJSON(command));
+		await new REST({ version: '10' })
+				.setToken(process.env.TOKEN)
+				.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), { body: parsed });
+	}
+
+	private parseCommandToSlashJSON(command: Command) {
+		const name = command.nameLocales?.['en-US'] ?? command.name;
+		const description = command.descriptionLocales?.['en-US'] ?? command.description ?? 'No description provided.';
+
+		if (!name || !description) {
+			throw new Error(`Command ${command.name} is missing a name or description for en-US locale.`);
+		}
+
+		const previewSlash = new SlashCommandBuilder()
+				.setName(name)
+				.setDescription(description)
+				.setDefaultMemberPermissions(command.permissions as bigint)
+				.setNameLocalizations(command.nameLocales || {})
+				.setDescriptionLocalizations(command.descriptionLocales || {});
+
+		const slash = command.slash?.(previewSlash) ?? previewSlash;
+
+		return slash.toJSON();
 	}
 }
 

@@ -1,5 +1,5 @@
 import { Command } from "../types/command.types";
-import { APIEmbed, Collection, CommandInteraction, GuildMember, Interaction, InteractionType } from "discord.js";
+import { APIEmbed, Collection, GuildMember, Interaction, InteractionType } from "discord.js";
 import { TwokeiClient } from "../structures/TwokeiClient";
 
 class CommandHandler {
@@ -15,11 +15,11 @@ class CommandHandler {
 	}
 
 	public async loadCommands() {
-		if (!this.client?.options?.commandsPaths) {
+		if (!this.client?.options?.commandsPath) {
 			return;
 		}
 
-		const commands = await this.client.getContextValues<Command>(this.client.options.commandsPaths);
+		const commands = await this.client.getContextValues<Command>(this.client.options.commandsPath);
 		commands.forEach(command => this.commands.set(command.name, command));
 	}
 

@@ -13,11 +13,11 @@ class EventHandler {
 	}
 
 	public async loadEvents() {
-		if (!this.client?.options?.eventsPaths) {
+		if (!this.client?.options?.eventsPath) {
 			return;
 		}
 
-		const events = await this.client.getContextValues<EventCreation<any>>(this.client.options.eventsPaths);
+		const events = await this.client.getContextValues<EventCreation<any>>(this.client.options.eventsPath);
 
 		events.forEach(event => {
 			this.events.add(event);
