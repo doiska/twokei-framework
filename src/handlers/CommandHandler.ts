@@ -1,17 +1,16 @@
 import { Command } from "../types/command.types";
-import { APIEmbed, Collection, GuildMember, Interaction, InteractionType } from "discord.js";
+import { APIEmbed, GuildMember, Interaction, InteractionType } from "discord.js";
 import { TwokeiClient } from "../structures/TwokeiClient";
 
 class CommandHandler {
 
 	private readonly client: TwokeiClient;
-	readonly commands: Collection<string, Command>;
+
+	public commands = new Map<string, Command>;
 
 	constructor(client: TwokeiClient) {
 		this.client = client;
-		this.commands = new Collection<string, Command>();
-
-		this.client.on('interactionCreate', this.handleCommand);
+		this.client.on('interactionCreate', (interaction) => this.handleCommand(interaction));
 	}
 
 	public async loadCommands() {
@@ -20,11 +19,16 @@ class CommandHandler {
 		}
 
 		const commands = await this.client.getContextValues<Command>(this.client.options.commandsPath);
-		commands.forEach(command => this.commands.set(command.name, command));
+		this.commands = new Map(commands.map(command => [command.name, command]));
+		console.log(`Loaded ${commands.length} commands`);
 	}
 
 	public async handleCommand(interaction: Interaction) {
 		if (interaction.type !== InteractionType.ApplicationCommand) {
+			return;
+		}
+
+		if(!this.commands) {
 			return;
 		}
 
@@ -34,10 +38,7 @@ class CommandHandler {
 			return;
 		}
 
-		const translator = (key: string, args?: Record<string, string>) => {
-			console.log(`Translating ${key} for ${interaction.locale}`, args);
-			return key;
-		}
+		const translator = (key: string, args?: Record<string, string>) => key;
 
 		await interaction.deferReply();
 

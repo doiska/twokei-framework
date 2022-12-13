@@ -46,8 +46,6 @@ class TwokeiClient extends Client {
 	constructor(twokeiOptions: ClientOptions) {
 		super({
 			autoload: true,
-			eventsPath: '../events/**/*.js',
-			commandsPath: '../commands/**/*.js',
 			...twokeiOptions
 		});
 
@@ -56,7 +54,7 @@ class TwokeiClient extends Client {
 
 		if (twokeiOptions.autoload) {
 			this.commandHandler.loadCommands().then(() => this.registerSlashCommands());
-			this.eventHandler.loadEvents();
+			this.eventHandler.loadEvents().then(() => console.log('All events loaded.'));
 		}
 	}
 
@@ -68,8 +66,6 @@ class TwokeiClient extends Client {
 			return Object.values(command);
 		});
 
-		console.log(values.flat());
-
 		return values.flat() as T[];
 	}
 
@@ -78,7 +74,7 @@ class TwokeiClient extends Client {
 		return await glob(path, { cwd, onlyFiles: true });
 	}
 
-	private async registerSlashCommands() {
+	public async registerSlashCommands() {
 		if (!process.env.CLIENT_ID || !process.env.TOKEN || !process.env.GUILD_ID) {
 			throw new Error('Missing CLIENT_ID, TOKEN or GUILD_ID in .env file.');
 		}
