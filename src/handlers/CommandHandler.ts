@@ -44,7 +44,6 @@ class CommandHandler {
 
 		try {
 			const response = await command.execute({
-				client: this.client,
 				command: interaction.commandName,
 				input: interaction.options.data.reduce((acc, option) => ({ ...acc, [option.name]: option.value }), {}),
 				guild: interaction.guild,
@@ -64,6 +63,7 @@ class CommandHandler {
 
 		} catch (e) {
 			await interaction.editReply(`An error occurred. Please try again later.`);
+			throw e;
 		}
 	}
 }

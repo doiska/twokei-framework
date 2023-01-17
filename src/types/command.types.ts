@@ -12,11 +12,6 @@ export type CommandResponse = void | string | EmbedData | EmbedBuilder;
 export type CommandContext<T = any> = {
 
 	/**
-	 * Your client instance
-	 */
-	client: TwokeiClient,
-
-	/**
 	 * Command name
 	 */
 	command: string;
