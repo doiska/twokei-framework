@@ -14,20 +14,27 @@ class EventHandler {
 
 	public async loadEvents() {
 		if (!this.client?.options?.eventsPath) {
+			console.log(`No events path provided.`);
 			return;
 		}
 
 		const events = await this.client.getContextValues<EventCreation<any>>(this.client.options.eventsPath);
 
+		console.log(`Loading ${events.length} events...`);
+
 		events.forEach(event => {
 			this.events.add(event);
 
 			if(event.once) {
-				this.client.once(event.name, (...args) => event.execute(this.client, ...args));
+				this.client.once(event.name, event.execute);
 			} else {
-				this.client.on(event.name, (...args) => event.execute(this.client, ...args));
+				this.client.on(event.name, event.execute);
 			}
+
+			console.log(`Loaded event ${event.name}`);
 		});
+
+		console.log(`Loaded ${events.length} events.`);
 	}
 }
 

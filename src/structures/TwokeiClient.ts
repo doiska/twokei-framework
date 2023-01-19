@@ -54,7 +54,7 @@ class TwokeiClient extends Client {
 
 		if (twokeiOptions.autoload) {
 			this.commandHandler.loadCommands().then(() => this.registerSlashCommands());
-			this.eventHandler.loadEvents().then(() => console.log('All events loaded.'));
+			this.eventHandler.loadEvents();
 		}
 	}
 
