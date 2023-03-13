@@ -4,6 +4,7 @@ import { EventHandler } from "../handlers/EventHandler";
 
 import glob from 'fast-glob';
 import { Command } from "../types/command.types";
+import { createEvent, createEventConst } from '../factory/CreateEvent';
 
 declare module 'discord.js' {
 	interface ClientOptions {
@@ -75,14 +76,29 @@ class TwokeiClient extends Client {
 	}
 
 	public async registerSlashCommands() {
-		if (!process.env.CLIENT_ID || !process.env.TOKEN || !process.env.GUILD_ID) {
+
+		const cliendId = this.application?.id ?? process.env.CLIENT_ID;
+
+		if (!cliendId|| !process.env.TOKEN) {
 			throw new Error('Missing CLIENT_ID, TOKEN or GUILD_ID in .env file.');
 		}
 
 		const parsed = Array.from(this.commandHandler.commands.values()).map(command => this.parseCommandToSlashJSON(command));
-		await new REST({ version: '10' })
-				.setToken(process.env.TOKEN)
-				.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), { body: parsed });
+
+		const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
+
+
+		if(process.env.NODE_ENV !== 'production' && process.env.GUILD_ID) {
+			await rest.put(
+				Routes.applicationGuildCommands(cliendId, process.env.GUILD_ID),
+				{ body: parsed }
+			);
+		} else {
+			await rest.put(
+				Routes.applicationCommands(cliendId),
+				{ body: parsed }
+			);
+		}
 	}
 
 	private parseCommandToSlashJSON(command: Command) {

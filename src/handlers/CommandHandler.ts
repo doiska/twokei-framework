@@ -1,6 +1,7 @@
 import { Command } from "../types/command.types";
 import { APIEmbed, GuildMember, Interaction, InteractionType } from "discord.js";
 import { TwokeiClient } from "../structures/TwokeiClient";
+import { MessageBuilder } from '../structures/MessageBuilder';
 
 class CommandHandler {
 
@@ -20,7 +21,6 @@ class CommandHandler {
 
 		const commands = await this.client.getContextValues<Command>(this.client.options.commandsPath);
 		this.commands = new Map(commands.map(command => [command.name, command]));
-		console.log(`Loaded ${commands.length} commands`);
 	}
 
 	public async handleCommand(interaction: Interaction) {
@@ -38,32 +38,30 @@ class CommandHandler {
 			return;
 		}
 
-		const translator = (key: string, args?: Record<string, string>) => key;
 
 		await interaction.deferReply();
 
-		try {
-			const response = await command.execute({
-				command: interaction.commandName,
-				input: interaction.options.data.reduce((acc, option) => ({ ...acc, [option.name]: option.value }), {}),
-				guild: interaction.guild,
-				user: interaction.user,
-				channel: interaction?.channel,
-				member: interaction?.member as GuildMember,
-				interaction: interaction,
-				t: translator
-			});
+		const response = await command.execute({
+			command: interaction.commandName,
+			input: interaction.options.data.reduce((acc, option) => ({ ...acc, [option.name]: option.value }), {}),
+			guild: interaction.guild,
+			user: interaction.user,
+			channel: interaction?.channel,
+			member: interaction?.member as GuildMember,
+			interaction: interaction,
+		});
 
-			if (response) {
-				const isObject = typeof response === "object";
-				await interaction.editReply(isObject ? { embeds: [response as APIEmbed] } : response);
-			} else {
-				await interaction.deleteReply();
-			}
+		if(!response) {
+			await interaction.deleteReply();
+			return;
+		}
 
-		} catch (e) {
-			await interaction.editReply(`An error occurred. Please try again later.`);
-			throw e;
+		const isObject = typeof response === "object";
+
+		if(response instanceof MessageBuilder) {
+			await response?.followUp(interaction);
+		} else {
+			await interaction.editReply(isObject ? { embeds: [response as APIEmbed] } : response);
 		}
 	}
 }

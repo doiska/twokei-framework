@@ -6,8 +6,9 @@ import {
 	TextBasedChannel, User
 } from "discord.js";
 import { TwokeiClient } from "../structures/TwokeiClient";
+import { MessageBuilder } from '../structures/MessageBuilder';
 
-export type CommandResponse = void | string | EmbedData | EmbedBuilder;
+export type CommandResponse = void | string | EmbedData | EmbedBuilder | MessageBuilder;
 
 export type CommandContext<T = any> = {
 
@@ -45,12 +46,6 @@ export type CommandContext<T = any> = {
 	 */
 	interaction: CommandInteraction;
 
-	/**
-	 * Translate {key} replacing {args}.
-	 * @param key
-	 * @param args
-	 */
-	t: (key: string, args?: Record<string, string>) => string;
 }
 
 export type CommandExecution = (context: CommandContext) => CommandResponse | Promise<CommandResponse>;
