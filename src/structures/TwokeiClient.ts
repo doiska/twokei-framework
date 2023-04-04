@@ -77,9 +77,9 @@ class TwokeiClient extends Client {
 
 	public async registerSlashCommands() {
 
-		const cliendId = this.application?.id ?? process.env.CLIENT_ID;
+		const clientId = this.application?.id ?? process.env.CLIENT_ID;
 
-		if (!cliendId|| !process.env.TOKEN) {
+		if (!clientId|| !process.env.TOKEN) {
 			throw new Error('Missing CLIENT_ID, TOKEN or GUILD_ID in .env file.');
 		}
 
@@ -87,17 +87,23 @@ class TwokeiClient extends Client {
 
 		const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
-
 		if(process.env.NODE_ENV !== 'production' && process.env.GUILD_ID) {
+			// rest.put(Routes.applicationGuildCommands(clientId, process.env.GUILD_ID), { body: [] })
+			// 	.then(() => console.log('Successfully deleted all guild commands.'))
+			// 	.catch(console.error);
+
 			await rest.put(
-				Routes.applicationGuildCommands(cliendId, process.env.GUILD_ID),
+				Routes.applicationGuildCommands(clientId, process.env.GUILD_ID),
 				{ body: parsed }
-			);
+			).then(() => console.log('Successfully registered guild commands.'))
+			.catch(console.error);
 		} else {
+
 			await rest.put(
-				Routes.applicationCommands(cliendId),
+				Routes.applicationCommands(clientId),
 				{ body: parsed }
-			);
+			).then(() => console.log('Successfully registered application commands.'))
+			.catch(console.error);
 		}
 	}
 
